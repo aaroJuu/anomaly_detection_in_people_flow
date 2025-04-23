@@ -1,10 +1,8 @@
 import pandas as pd
-import pickle
 from pathlib import Path
 from collections import defaultdict
-from tqdm import tqdm
 
-def get_csv_file_paths():
+def get_raw_csv_file_paths():
     """Returns full paths to all CSV files in the ../root/raw_csvs directory.
        Assumes that "raw_csvs" directory is in the same root directory
        as this repository. Like so:
@@ -20,6 +18,11 @@ def get_csv_file_paths():
     current_path = Path(__file__).resolve()
     raw_csvs_dir = current_path.parent.parent / "raw_csvs"
     return list(raw_csvs_dir.glob("*.csv"))
+
+def get_clean_csv_file_paths():
+    current_path = Path(__file__).resolve()
+    clean_csvs_dir = current_path.parent.parent / "clean_csvs"
+    return list(clean_csvs_dir.glob("*.csv"))
 
 def clean_csv_file(raw_csv_path, chunk_size=100000):
     """Removes unnecessary columns (floor_name, zone_name) and decimals.
@@ -58,8 +61,8 @@ def clean_csv_file(raw_csv_path, chunk_size=100000):
 
 
 if __name__ == "__main__":
-    raw_csv_paths = get_csv_file_paths()
+    raw_csv_paths = get_raw_csv_file_paths()
     print(f"Found {len(raw_csv_paths)} CSV files:")
     for path in raw_csv_paths:
         print(" -", path)
-    clean_csv_file(raw_csv_paths[1])
+    clean_csv_file(raw_csv_paths[0])
