@@ -1,8 +1,7 @@
 import pandas as pd
-from pathlib import Path
 from collections import defaultdict
 from tqdm import tqdm
-from preprocessing import get_clean_csv_file_paths
+from path_finder import get_clean_csv_file_paths, save_trajectory_pkl_path
 import pickle
 
 def build_trajectories(clean_csv_path):
@@ -27,12 +26,7 @@ def save_trajectory_dict(trajectories, clean_csv_path):
     """
     Saves the trajectory dictionary as a pickle file under trajectory_pickles/
     """
-    current_path = Path(__file__).resolve()
-    output_dir = current_path.parent.parent / "trajectory_pickles"
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    output_name = clean_csv_path.stem.replace("_clean", "") + "_trajectories.pkl"
-    output_path = output_dir / output_name
+    output_path = save_trajectory_pkl_path(clean_csv_path)
 
     with open(output_path, "wb") as f:
         pickle.dump(trajectories, f)
@@ -40,11 +34,15 @@ def save_trajectory_dict(trajectories, clean_csv_path):
     print(f"Trajectory dictionary saved to: {output_path}")
     return output_path
 
-if __name__ == "__main__":
+def main():
     clean_csv_paths = get_clean_csv_file_paths()         # list of clean_csv paths
-    traj_dict = build_trajectories(clean_csv_paths[1])
-    save_trajectory_dict(traj_dict, clean_csv_paths[1])
+    # ---- FILE CONFIG ----
+    i = 0 # Configure list element for file selection (0-5)
+    # ---------------------
 
-    # Optional: Inspect a sample
-    sample_id = list(traj_dict.keys())[0]
-    print(f"Sample trajectory for agent {sample_id}:\n{traj_dict[sample_id][:5]}")
+    input_path = clean_csv_paths[i]
+    traj_dict = build_trajectories(input_path)
+    save_trajectory_dict(traj_dict, input_path)
+
+if __name__ == "__main__":
+    main()
